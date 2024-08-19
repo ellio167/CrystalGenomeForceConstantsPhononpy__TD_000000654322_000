@@ -54,7 +54,7 @@ class TestDriver(CrystalGenomeTestDriver):
 
         # Compute
 
-        ####### Do Phononpy stuff here ########
+        force_constants, supercell, supercell_idents = calc_force_constant_matrix(atoms_primitive, cell_replicas, self._calc)
 
         # Now it is time to write the output in the format you created in your Property Definition. The base class provides utility methods
         # to facilitate this process.
@@ -67,7 +67,7 @@ class TestDriver(CrystalGenomeTestDriver):
 
         # This method adds additional fields to your property instance by specifying the key names you defined
         # in your property definition and providing units if necessary.
-        self._add_key_to_current_property_instance("cell-replicas",cell_replicas,
+        self._add_key_to_current_property_instance("supercell-atom-mapping",supercell_idents,
                                                    units=None)
 
         # You may also provide a dictionary supplying uncertainty information. It is optional, and normally
@@ -81,5 +81,12 @@ class TestDriver(CrystalGenomeTestDriver):
         #}
         self._add_key_to_current_property_instance("force-constants-matrix",force_constants_matrix,
                                                    units="eV/angstrom^2",uncertainty_info=uncertainty_info)
+
+        # @@@ TODO @@@ write coordiantes file
+        self._add_file_to_current_property_instantce("primitive-coordinates-file", "XXXXXXXX")
+
+        # @@@ TODO @@@ write supercell file
+        self._add_file_to_current_property_instantce("supercell-coordinates-file", "XXXXXXXX")
+
 
         # If your Test Driver reports multiple Property Instances, repeat the process above for each one.
