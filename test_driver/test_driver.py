@@ -52,9 +52,25 @@ class TestDriver(CrystalGenomeTestDriver):
         linear_replicas = ceil(force_influence_distance/min_cell_diagonal)
         cell_replicas = [linear_replicas, linear_replicas, linear_replicas]  # Is there a better way to do this?!?
 
-        # Compute
+        # Compute force constants
+        force_constants_matrix, supercell, supercell_idents = calc_force_constant_matrix(atoms_primitive, cell_replicas, self._calc)
 
-        force_constants, supercell, supercell_idents = calc_force_constant_matrix(atoms_primitive, cell_replicas, self._calc)
+        # Compute band strucuture, DOS, and phonon-stability
+        # @@@ TODO @@@ make call to compute post-processed values using force constants
+        # @@@ TODO @@@ producing the following output variables"
+        # @@@ TODO @@@   wave_vectors
+        # @@@ TODO @@@   special_points_indices
+        # @@@ TODO @@@   special_points_labels
+        # @@@ TODO @@@   response_frequency
+        # @@@ TODO @@@   response_eigenvector
+        # @@@ TODO @@@   response_frequency_ordered
+        # @@@ TODO @@@
+        # @@@ TODO @@@   frequency
+        # @@@ TODO @@@   density
+        # @@@ TODO @@@
+        # @@@ TODO @@@   unstable
+
+
 
         # Now it is time to write the output in the format you created in your Property Definition. The base class provides utility methods
         # to facilitate this process.
@@ -62,6 +78,8 @@ class TestDriver(CrystalGenomeTestDriver):
         # property_name can be the full "property-id" field in your Property Definition, or the "Property Name",
         # which is just the short name after the slash, as used here. You can also specify whether your property
         # includes stress and temperature (no by default), and have the option to specify a disclaimer.
+
+        # force-constants-matrix-crystal property instance
         self._add_property_instance_and_common_crystal_genome_keys("force-constants-matrix-crystal",
                                                                    write_stress=True, write_temp=False, disclaimer=disclaimer)
 
@@ -82,11 +100,41 @@ class TestDriver(CrystalGenomeTestDriver):
         self._add_key_to_current_property_instance("force-constants-matrix",force_constants_matrix,
                                                    units="eV/angstrom^2",uncertainty_info=uncertainty_info)
 
-        # @@@ TODO @@@ write coordiantes file
-        self._add_file_to_current_property_instantce("primitive-coordinates-file", "XXXXXXXX")
+        # @@@ TODO @@@ write coordiantes file using `original_cell`
+        self._add_file_to_current_property_instantce("primitive-coordinates-file", "?????????")
 
-        # @@@ TODO @@@ write supercell file
-        self._add_file_to_current_property_instantce("supercell-coordinates-file", "XXXXXXXX")
+        # @@@ TODO @@@ write supercell file using `supercell`
+        self._add_file_to_current_property_instantce("supercell-coordinates-file", "?????????")
 
 
         # If your Test Driver reports multiple Property Instances, repeat the process above for each one.
+
+        # phonon-band-structure property instance
+        self._add_property_instance_and_common_crystal_genome_keys("phonon-band-structure",
+                                                                   write_stress=True, write_temp=False, disclaimer=disclaimer)
+
+        self._add_key_to_current_property_instance("special-points-indices", special_points_indices,
+                                                   units=None)
+        self._add_key_to_current_property_instance("special-points-labels", special_points_labels,
+                                                   units=None)
+        self._add_key_to_current_property_instance("response-frequency-ordered", response_frequency_ordered,
+                                                   units=None)
+
+        uncertainty_info = None
+        self._add_key_to_current_property_instance("wave-vectors", wave_vectors,
+                                                   units="?????????",uncertainty_info=uncertainty_info)
+        self._add_key_to_current_property_instance("response-frequency", response_frequency,
+                                                   units="?????????",uncertainty_info=uncertainty_info)
+        self._add_key_to_current_property_instance("response-eigenvector", response_eigenvector,
+                                                   units="?????????",uncertainty_info=uncertainty_info)
+
+
+        # phonon-density-of-states property instance
+        self._add_property_instance_and_common_crystal_genome_keys("phonon-density-of-states",
+                                                                   write_stress=True, write_temp=False, disclaimer=disclaimer)
+
+        uncertainty_info = None
+        self._add_key_to_current_property_instance("frequency", frequency,
+                                                   units="?????????",uncertainty_info=uncertainty_info)
+        self._add_key_to_current_property_instance("density", density,
+                                                   units="?????????",uncertainty_info=uncertainty_info)
